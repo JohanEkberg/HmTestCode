@@ -1,10 +1,20 @@
 package com.example.hmtestcode
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -33,53 +43,62 @@ class ScrollToTopFabTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun fab_is_not_visible_initially() {
-        lateinit var listState: LazyListState
+    fun initiallyDoesNotExist() {
+        // Start the screen with index 0, Fab should not be visible
+        setupProductScreenHelper(initialIndex = 0)
 
-        composeTestRule.setContent {
-            listState = rememberLazyListState()
-
-            ScrollToTopFab(
-                listState = listState,
-                products = fakePagingItems()
-            )
-        }
-
-        composeTestRule
-            .onNodeWithTag("ScrollToTopFab")
-            .assertDoesNotExist()
+        // Verify that the Fab is not visible
+        composeTestRule.onNodeWithTag("ScrollToTopFab").assertDoesNotExist()
     }
 
     @Test
-    fun fab_becomes_visible_after_scroll() {
-        lateinit var listState: LazyListState
+    fun appearsWhenScrollingDown() {
+        // Start the screen with an index that trigger Fab visibility
+        setupProductScreenHelper(initialIndex = 12)
 
+        // Verify that the Fab is shown
+        composeTestRule.onNodeWithTag("ScrollToTopFab").assertIsDisplayed()
+    }
+
+    @Test
+    fun clickingScrollsToTop() {
+        // Start with a high index (far down in the list)
+        setupProductScreenHelper(initialIndex = 20)
+
+        // Click the Fab
+        composeTestRule.onNodeWithTag("ScrollToTopFab").performClick()
+
+        // Verify that the list has scrolled to the top.
+        composeTestRule.onNodeWithText("Product 0").assertIsDisplayed()
+
+        // Verify that the Fab has disappeared
+        composeTestRule.onNodeWithTag("ScrollToTopFab").assertDoesNotExist()
+    }
+
+    private fun setupProductScreenHelper(initialIndex: Int) {
         composeTestRule.setContent {
-            listState = rememberLazyListState()
+            val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
 
-            ScrollToTopFab(
-                listState = listState,
-                products = fakePagingItems()
-            )
-        }
+            // Create an empty flow of PagingData
+            val emptyMockProducts: LazyPagingItems<String> = flowOf(
+                PagingData.empty<String>()
+            ).collectAsLazyPagingItems()
 
-        // Scrolla programmatically
-        composeTestRule.runOnIdle {
-            runBlocking {
-                listState.scrollToItem(10)
+            Box {
+                // Create a mock items list of 50 elements
+                LazyColumn(state = listState) {
+                    items(50) { index ->
+                        Text(text = "Product $index", modifier = Modifier.height(100.dp))
+                    }
+                }
+
+                // Call the composable to test
+                ScrollToTopFab(
+                    listState = listState,
+                    products = emptyMockProducts,
+                    pageSize = 4
+                )
             }
         }
-
-        composeTestRule.waitForIdle()
-
-        composeTestRule
-            .onNodeWithTag("ScrollToTopFab")
-            .assertExists()
     }
-}
-
-@Composable
-fun fakePagingItems(): LazyPagingItems<Any> {
-    val flow = flowOf(PagingData.from(List(30) { Any() }))
-    return flow.collectAsLazyPagingItems()
 }
