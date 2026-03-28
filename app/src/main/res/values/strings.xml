@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">HM Test Code Application</string>
+
+    <string name="error">Ett fel har uppstått!</string>
+    <string name="error_no_internet">Ingen internetanslutning</string>
+    <string name="error_server_error">Serverfel (%1$d)</string>
+    <string name="error_unknown">Något gick fel</string>
+    <string name="error_load_image_failed">Kunde inte ladda bild</string>
+
+    <string name="load_products">Laddar produkter…</string>
+    <string name="load_more">Laddar fler…</string>
+    <string name="try_again">Försök igen</string>
+    <string name="no_products">Inga produkter hittade</string>
+    <string name="load_image">Laddar bild…</string>
+    <string name="dismiss">Stäng</string>
+
+
+</resources>
