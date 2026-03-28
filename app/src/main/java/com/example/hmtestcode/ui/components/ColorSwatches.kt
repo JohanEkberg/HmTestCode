@@ -13,7 +13,6 @@ import com.example.hmtestcode.domain.model.Swatches
 
 @Composable
 fun ColorSwatches(swatches: List<Swatches>) {
-
     Row {
         val visible = swatches.take(3)
 

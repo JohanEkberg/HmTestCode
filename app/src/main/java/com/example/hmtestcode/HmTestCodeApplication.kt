@@ -7,7 +7,6 @@ import com.example.hmtestcode.di.repositoryModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
-//@HiltAndroidApp
 class HmTestCodeApplication : Application() {
     override fun onCreate() {
         super.onCreate()

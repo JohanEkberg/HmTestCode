@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import com.example.hmtestcode.ui.screens.ProductScreen
 import com.example.hmtestcode.ui.theme.HmtestcodeTheme
 
-//@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
